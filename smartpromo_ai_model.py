@@ -832,7 +832,8 @@ class SmartPromoAIModel:
         # Arrondi à l'entier le plus proche
         final_promotion_percentage = round(ai_promotion_percentage)
         
-        return {
+        # Création des données de base pour l'impact
+        basic_result = {
             'article_id': article_id,
             'article_name': article_row['ArticleName'],
             'current_price': article_row['Price'],
@@ -847,6 +848,14 @@ class SmartPromoAIModel:
             'prediction_method': prediction_method,
             'discounted_price': round(article_row['Price'] * (1 - final_promotion_percentage/100), 2)
         }
+        
+        # Calcul de l'impact prévu
+        impact_data = self.predict_impact(basic_result, sales_history)
+        
+        # Fusion des résultats
+        complete_result = {**basic_result, **impact_data}
+        
+        return complete_result
     
     def predict_impact(self, article_data: Dict, sales_history: pd.DataFrame) -> Dict:
         """
@@ -954,15 +963,8 @@ class SmartPromoAIModel:
             for _, article_row in articles_df.iterrows():
                 logger.info(f"Analyse de l'article: {article_row['ArticleName']}")
                 
-                # Calcul de la promotion optimale
-                promotion_data = self.calculate_optimal_promotion_percentage(article_row)
-                
-                # Prédiction de l'impact
-                sales_history = self.get_sales_history(article_row['ArticleId'])
-                impact_prediction = self.predict_impact(promotion_data, sales_history)
-                
-                # Fusion des résultats
-                complete_analysis = {**promotion_data, **impact_prediction}
+                # Calcul de la promotion optimale avec impact inclus
+                complete_analysis = self.calculate_optimal_promotion_percentage(article_row)
                 results.append(complete_analysis)
             
             logger.info(f"Analyse terminée pour {len(results)} articles")
@@ -1008,7 +1010,7 @@ class SmartPromoAIModel:
 📊 STATISTIQUES GÉNÉRALES:
    • Nombre d'articles analysés: {len(analysis_results)}
    • Promotion moyenne recommandée: {avg_promotion:.1f}%
-   • Impact total prévu sur le revenu: {total_potential_revenue_change:,.2f} €
+   • Impact total prévu sur le revenu: {total_potential_revenue_change:,.2f} DT
    • Impact total prévu sur les ventes: {total_potential_sales_change:,.0f} unités
 
 📈 RÉPARTITION DES PROMOTIONS:
@@ -1122,7 +1124,7 @@ def main():
                 method_icon = "🤖" if result.get('prediction_method') == 'ai' else "📊"
                 print(f"""
 🏷️  Article: {result['article_name']}
-   💰 Prix actuel: {result['current_price']:.2f} € → Prix promo: {result['discounted_price']:.2f} €
+   💰 Prix actuel: {result['current_price']:.2f} DT → Prix promo: {result['discounted_price']:.2f} DT
    📊 Promotion recommandée: {result['optimal_promotion_percentage']}% {method_icon}
    📦 Stock actuel: {result['current_stock']} unités
    
@@ -1136,7 +1138,7 @@ def main():
    
    🎯 Impact prévu (30 jours):
       • Ventes: {result['current_monthly_sales_volume']:.0f} → {result['predicted_monthly_sales_volume']:.0f} unités ({result['sales_volume_change_percentage']:+.1f}%)
-      • Revenu: {result['current_monthly_revenue']:.2f} → {result['predicted_monthly_revenue']:.2f} € ({result['revenue_change_percentage']:+.1f}%)
+      • Revenu: {result['current_monthly_revenue']:.2f} → {result['predicted_monthly_revenue']:.2f} DT ({result['revenue_change_percentage']:+.1f}%)
    
    💡 {result['recommendation']}
 """)
