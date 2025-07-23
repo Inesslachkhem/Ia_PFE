@@ -1,0 +1,29 @@
+"""
+Requirements pour SmartPromo AI Model
+=====================================
+
+Ce fichier contient toutes les dépendances nécessaires pour faire fonctionner le modèle d'IA.
+
+Installation:
+pip install -r requirements.txt
+"""
+
+# Base de données
+pyodbc>=4.0.35
+
+# Analyse de données
+pandas>=1.5.0
+numpy>=1.24.0
+
+# Machine Learning et IA
+scikit-learn>=1.3.0
+joblib>=1.2.0
+
+# Logging et utilitaires
+python-dateutil>=2.8.0
+
+# Format JSON (inclus dans Python standard)
+# datetime (inclus dans Python standard)
+# typing (inclus dans Python standard)
+# warnings (inclus dans Python standard)
+# logging (inclus dans Python standard)
