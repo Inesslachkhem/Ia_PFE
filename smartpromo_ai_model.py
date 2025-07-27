@@ -199,7 +199,7 @@ class SmartPromoAIModel:
     
     def get_promotion_history(self, article_id: int, days: int = 180) -> pd.DataFrame:
         """
-        Récupère l'historique des promotions d'un article avec prix avant/après
+        Récupère l'historique des promotions d'un article avec prix avant/après : lle sert à extraire les promotions appliquées sur un article donné, et à calculer les ventes réalisées pendant chaque période de promotion.
         
         Args:
             article_id (int): ID de l'article
@@ -439,7 +439,7 @@ class SmartPromoAIModel:
     
     def extract_training_data(self) -> pd.DataFrame:
         """
-        Extrait les données d'entraînement à partir de l'historique des promotions et ventes
+        Extrait les données d'entraînement à partir de l'historique des promotions et ventes,  Créer un dataset d'entraînement pour les modèles d'IA , Calculer les métriques d'efficacité des promotions passées , Préparer les features pour l'apprentissage machine 
         
         Returns:
             pd.DataFrame: Données d'entraînement avec features et target
@@ -495,7 +495,7 @@ class SmartPromoAIModel:
             
             # Nettoyage et calcul des features
             df = df.dropna(subset=['SalesBeforePromo', 'SalesDuringPromo'])
-            
+            #Calcul des features d'entraînement
             # Calcul de la rotation
             df['RotationRate'] = df['SalesBeforePromo'] / df['QuantityInjected'].replace(0, 1)
             
@@ -577,8 +577,7 @@ class SmartPromoAIModel:
     
     def prepare_features(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
         """
-        Prépare les features et target pour l'entraînement
-        
+Cette fonction est le pont crucial entre les données brutes et l'entraînement des modèles d'IA. Elle transforme les données historiques en format adapté pour l'apprentissage automatique.        
         Args:
             df (pd.DataFrame): Données brutes
             
@@ -859,7 +858,7 @@ class SmartPromoAIModel:
     
     def predict_impact(self, article_data: Dict, sales_history: pd.DataFrame) -> Dict:
         """
-        Prédit l'impact de la promotion sur le revenu et le volume des ventes
+        Prédit l'impact de la promotion sur le revenu et le volume des ventes , estime l'augmentation des ventes et l'effet sur les revenus sur une période de 30 jours.
         
         Args:
             article_data (Dict): Données de l'article avec promotion
